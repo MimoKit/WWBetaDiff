@@ -141,7 +141,7 @@ async def render_overview(versions: list[str], items: list[dict[str, Any]]) -> b
         y += 112
     draw.text(
         (MARGIN, height - 38),
-        "发送 ww diff 名称 查看详情  ·  Data: nanoka.cc",
+        "发送 wwng 名称 查看详情  ·  Data: nanoka.cc",
         font=core_font(17),
         fill=MUTED,
     )

@@ -10,8 +10,8 @@ from .render import render_detail, render_overview
 sv = SV("鸣潮体验服差异", area="ALL")
 
 
-@sv.on_command("diff", block=True)
-async def ww_diff(bot: Bot, ev: Event) -> None:
+@sv.on_command("ng", block=True)
+async def ww_ng(bot: Bot, ev: Event) -> None:
     try:
         versions, diffs = await get_beta_diffs()
     except (httpx.HTTPError, ValueError, KeyError):
