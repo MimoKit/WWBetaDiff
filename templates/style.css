@@ -20,6 +20,7 @@ body {
 .header .versions span {
     display: inline-block; background: rgba(255, 255, 255, 0.75);
     border-radius: 999px; padding: 4px 18px; margin-right: 12px;
+    white-space: nowrap;
 }
 .section-title {
     font-size: 30px; color: #e26a9b; margin: 8px 4px 18px;
@@ -71,15 +72,15 @@ body {
 .row.before { background: #fdeeee; border-left: 6px solid #f28b9b; color: #b0434f; }
 .row.arrow { background: none; border: none; padding: 4px 14px; color: #c9b8d8; font-size: 18px; }
 .row.after { background: #e9f8ef; border-left: 6px solid #5ecb8b; color: #237a48; }
-.row .tag {
-    display: inline-block; font-size: 15px; border-radius: 999px;
-    padding: 0 12px; margin-right: 10px; color: #ffffff; vertical-align: 2px;
+.row .tag { font-weight: bold; }
+.row.before .tag { color: #d6336c; }
+.row.after .tag { color: #2b8a5a; }
+.row .hl {
+    display: inline-block;  /* pytakumi 只有 inline-block 才画背景 */
+    border-radius: 6px; padding: 0 3px; font-weight: bold;
 }
-.row.before .tag { background: #f28b9b; }
-.row.after .tag { background: #5ecb8b; }
-mark { border-radius: 6px; padding: 0 3px; font-weight: bold; }
-.row.before mark { background: #fbc4cc; color: #8f1d2c; }
-.row.after mark { background: #a9e8c3; color: #0f5c2e; }
+.row.before .hl { background: #fbc4cc; color: #8f1d2c; }
+.row.after .hl { background: #a9e8c3; color: #0f5c2e; }
 .empty { font-size: 20px; color: #b6a8c8; padding: 6px 0 4px; }
 .folded { font-size: 18px; color: #b6a8c8; margin-top: 4px; }
 .footer { font-size: 17px; color: #b6a8c8; text-align: center; margin-top: 6px; }

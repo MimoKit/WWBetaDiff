@@ -84,7 +84,7 @@ def page(body: str) -> str:
 
 def header(title: str, versions: list[str]) -> str:
     chips = "".join(
-        f"<span>V{index + 1} {html.escape(version)}</span>"
+        f"<span>V{index + 1}&nbsp;{html.escape(version)}</span>"
         for index, version in enumerate(versions)
     )
     return _tpl("header.html").substitute(title=html.escape(title), chips=chips)
@@ -103,9 +103,9 @@ def _diff_marked(before: str, after: str) -> tuple[str, str]:
             after_html.append(after_part)
         else:
             if before_part:
-                before_html.append(f"<mark>{before_part}</mark>")
+                before_html.append(f'<span class="hl">{before_part}</span>')
             if after_part:
-                after_html.append(f"<mark>{after_part}</mark>")
+                after_html.append(f'<span class="hl">{after_part}</span>')
     return "".join(before_html), "".join(after_html)
 
 
