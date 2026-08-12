@@ -91,10 +91,29 @@ def _entity_name(item: dict[str, Any]) -> str:
     return "角色" if item["entity"] == "character" else "武器"
 
 
+DPI = 144
+
+
 async def _render(body: str) -> bytes:
-    return await render_html_to_bytes(
-        page(body), max_width=WIDTH, dpi=144, lang="zh", font_name="Noto Sans SC"
-    )
+    """渲染 HTML。
+
+    pytakumi 的 max_width 是设备像素，dpi>96 时 CSS 布局宽 = max_width/(dpi/96)，
+    必须同时传 root_max_width=CSS 宽度，否则右侧内容被裁切。
+    旧版核心没有 root_max_width 参数，回退 dpi=96（dpr=1 不存在该问题）。
+    """
+    try:
+        return await render_html_to_bytes(
+            page(body),
+            max_width=WIDTH * DPI // 96,
+            dpi=DPI,
+            root_max_width=WIDTH,
+            lang="zh",
+            font_name="Noto Sans SC",
+        )
+    except TypeError:
+        return await render_html_to_bytes(
+            page(body), max_width=WIDTH, dpi=96, lang="zh", font_name="Noto Sans SC"
+        )
 
 
 async def render_overview(versions: list[str], items: list[dict[str, Any]]) -> bytes:
