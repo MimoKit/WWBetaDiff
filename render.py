@@ -92,7 +92,9 @@ def _entity_name(item: dict[str, Any]) -> str:
 
 
 async def _render(body: str) -> bytes:
-    return await render_html_to_bytes(page(body), max_width=WIDTH, dpi=144, lang="zh")
+    return await render_html_to_bytes(
+        page(body), max_width=WIDTH, dpi=144, lang="zh", font_name="Noto Sans SC"
+    )
 
 
 async def render_overview(versions: list[str], items: list[dict[str, Any]]) -> bytes:

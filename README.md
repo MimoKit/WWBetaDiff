@@ -25,6 +25,12 @@ git clone https://github.com/MimoKit/WWBetaDiff
 
 + 重启核心，发送 `wwng` 即可使用。
 
+## 丨字体说明
+
++ 插件内置 [Noto Sans SC](https://fonts.google.com/noto/specimen/Noto+Sans+SC) 静态字重（`fonts/NotoSansSC-Regular.ttf` / `NotoSansSC-Bold.ttf`），**无需手动安装**。
++ 插件加载时会自动把字体复制到用户字体目录（`~/.local/share/fonts`）并执行 `fc-cache` 刷新 fontconfig 缓存——GsCore 的 htmlkit 走 fontconfig 找字体，不识别 CSS data URI，所以必须内置注册。
++ 想换字体：把新的 `.ttf`（Regular/Bold 两个字重）放进 `fonts/`，修改 `render_html.py` 中的 `FONT_FILES` / `FONT_FAMILY` 即可。
+
 ## 丨指令列表
 
 | 指令 | 说明 |

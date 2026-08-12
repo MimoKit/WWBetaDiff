@@ -1,11 +1,8 @@
-@font-face {
-    font-family: 'NotoSansSC';
-    src: url(__FONT_URI__) format('truetype');
-}
+__FONT_FACES__
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
     width: __WIDTH__px;
-    font-family: 'NotoSansSC', 'MiSans', sans-serif;
+    font-family: 'Noto Sans SC', 'MiSans', sans-serif;
     background: linear-gradient(160deg, #fff8f3 0%, #fff0f6 55%, #f3f0ff 100%);
     color: #4a4458;
     padding: 36px 40px 28px;

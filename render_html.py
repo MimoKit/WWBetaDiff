@@ -11,16 +11,66 @@ from string import Template
 WIDTH = 1080
 
 ASSET_DIR = Path(__file__).parent
-FONT_PATH = ASSET_DIR / "fonts" / "NotoSansSC.ttf"
+FONT_DIR = ASSET_DIR / "fonts"
+FONT_FILES = {
+    400: FONT_DIR / "NotoSansSC-Regular.ttf",
+    700: FONT_DIR / "NotoSansSC-Bold.ttf",
+}
+FONT_FAMILY = "Noto Sans SC"
 TEMPLATE_DIR = ASSET_DIR / "templates"
 
 
+def register_fonts() -> None:
+    """把插件内置字体注册到系统 fontconfig。
+
+    htmlkit 通过 fontconfig 解析字体，不加载 CSS data URI 字体，
+    所以插件启动时把字体复制到用户字体目录并刷新缓存（浏览器预览仍走 data URI）。
+    """
+    import shutil
+    import subprocess
+
+    targets = [
+        Path.home() / ".local" / "share" / "fonts",  # Linux 标准用户字体目录
+        Path.home() / ".fonts",  # 旧版 Linux 兼容
+    ]
+    installed = False
+    for target in targets:
+        try:
+            target.mkdir(parents=True, exist_ok=True)
+            for font_file in FONT_FILES.values():
+                if font_file.exists():
+                    shutil.copy2(font_file, target / font_file.name)
+            installed = True
+            break
+        except OSError:
+            continue
+    if installed and shutil.which("fc-cache"):
+        subprocess.run(
+            ["fc-cache", "-f"],
+            check=False,
+            capture_output=True,
+            timeout=120,
+        )
+
+
+register_fonts()
+
+
 @lru_cache(maxsize=1)
-def _font_uri() -> str:
-    if not FONT_PATH.exists():
-        return ""
-    encoded = base64.b64encode(FONT_PATH.read_bytes()).decode("ascii")
-    return f"data:font/ttf;base64,{encoded}"
+def _font_faces() -> str:
+    blocks = []
+    for weight, font_file in FONT_FILES.items():
+        if not font_file.exists():
+            continue
+        encoded = base64.b64encode(font_file.read_bytes()).decode("ascii")
+        blocks.append(
+            "@font-face {\n"
+            f"    font-family: '{FONT_FAMILY}';\n"
+            f"    font-weight: {weight};\n"
+            f"    src: url(data:font/ttf;base64,{encoded}) format('truetype');\n"
+            "}"
+        )
+    return "\n".join(blocks)
 
 
 @lru_cache(maxsize=1)
@@ -28,7 +78,7 @@ def _style() -> str:
     return (
         (TEMPLATE_DIR / "style.css")
         .read_text(encoding="utf-8")
-        .replace("__FONT_URI__", _font_uri() or "about:blank")
+        .replace("__FONT_FACES__", _font_faces())
         .replace("__WIDTH__", str(WIDTH))
     )
 
