@@ -21,36 +21,26 @@ TEMPLATE_DIR = ASSET_DIR / "templates"
 
 
 def register_fonts() -> None:
-    """把插件内置字体注册到系统 fontconfig。
+    """把插件内置字体注册到 GsCore 的共享 pytakumi 渲染器。
 
-    htmlkit 通过 fontconfig 解析字体，不加载 CSS data URI 字体，
-    所以插件启动时把字体复制到用户字体目录并刷新缓存（浏览器预览仍走 data URI）。
+    pytakumi 只使用显式注册的字体——系统字体、fontconfig、CSS data URI
+    统统不生效，所以必须在渲染器上 register_font。旧版核心(htmlkit)下
+    静默跳过，走字体兜底。
     """
-    import shutil
-    import subprocess
+    try:
+        from gsuid_core.utils import html_render as core_html_render
 
-    targets = [
-        Path.home() / ".local" / "share" / "fonts",  # Linux 标准用户字体目录
-        Path.home() / ".fonts",  # 旧版 Linux 兼容
-    ]
-    installed = False
-    for target in targets:
-        try:
-            target.mkdir(parents=True, exist_ok=True)
-            for font_file in FONT_FILES.values():
-                if font_file.exists():
-                    shutil.copy2(font_file, target / font_file.name)
-            installed = True
-            break
-        except OSError:
-            continue
-    if installed and shutil.which("fc-cache"):
-        subprocess.run(
-            ["fc-cache", "-f"],
-            check=False,
-            capture_output=True,
-            timeout=120,
-        )
+        ensure_renderer = getattr(core_html_render, "_ensure_renderer", None)
+        if ensure_renderer is None:
+            return
+        renderer = ensure_renderer()
+        for weight, font_file in FONT_FILES.items():
+            if font_file.exists():
+                renderer.register_font(
+                    font_file.read_bytes(), name=FONT_FAMILY, weight=float(weight)
+                )
+    except Exception:  # noqa: BLE001 - 字体注册失败不应影响插件加载
+        pass
 
 
 register_fonts()
